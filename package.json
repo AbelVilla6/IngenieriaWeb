@@ -10,7 +10,6 @@
     "format": "prettier --check --ignore-path .gitignore ./src",
     "format:fix": "prettier --write --ignore-path .gitignore ./src",
     "seed": "tsx db/seeder.ts"
-
   },
   "dependencies": {
     "@headlessui/react": "^1.7.15",

@@ -27,55 +27,58 @@ export interface CreateUserResponse {
     _id: Types.ObjectId | string;
   }
   
-export async function createUser(user: {
-  email: string;
-  password: string;
-  name: string;
-  surname: string;
-  address: string;
-  birthdate: Date;
-}): Promise<CreateUserResponse | null> {
-  await connect();
+  export async function createUser(user: {
+    email: string;
+    password: string;
+    name: string;
+    surname: string;
+    address: string;
+    birthdate: Date;
+  }): Promise<CreateUserResponse | null> {
+    await connect();
   
-  const prevUser = await Users.find({ email: user.email });
+    const prevUser = await Users.find({ email: user.email });
   
-  if (prevUser.length !== 0) {
-    return null;
+    if (prevUser.length !== 0) {
+      return null;
+    }
+  
+    const doc: User = {
+      ...user,
+      birthdate: new Date(user.birthdate),
+      cartItems: [],
+      orders: [],
+    };
+  
+    const newUser = await Users.create(doc);
+  
+    return {
+      _id: newUser._id,
+    };
+  }
+  export interface UserResponse {
+    email: string;
+    name: string;
+    surname: string;
+    address: string;
+    birthdate: Date;
   }
   
-  const doc: User = {
-    ...user,
-    birthdate: new Date(user.birthdate),
-    cartItems: [],
-    orders: [],
-  };
+  export async function getUser(userId: string): Promise<UserResponse | null> {
+    await connect();
   
-  const newUser = await Users.create(doc);
+    const userProjection = {
+      email: true,
+      name: true,
+      surname: true,
+      address: true,
+      birthdate: true,
+    };
+    const user = await Users.findById(userId, userProjection);
   
-  return {
-    _id: newUser._id,
-  };
-}
-
-export interface UserResponse {
-  email: string;
-  name: string;
-  surname: string;
-  address: string;
-  birthdate: Date;
-}
-export async function getUser(userId: string): Promise<UserResponse | null> {
-  await connect();
-  const userProjection = {
-    email: true,
-    name: true,
-    surname: true,
-    address: true,
-    birthdate: true,
-  };
-  const user = await Users.findById(userId, userProjection);
-  if (user === null) {
-    return null;
+    if (user === null) {
+      return null;
+    }
+  
+    return user;
   }
-  return user;
-}

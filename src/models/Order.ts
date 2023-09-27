@@ -11,6 +11,7 @@ export interface Order {
     qty: number;
     price: number;
   }[];
+  user: Types.ObjectId;
 }
 
 const OrderSchema = new Schema({
@@ -50,6 +51,12 @@ const OrderSchema = new Schema({
       },
     },
   ],
+  user: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
 });
 
-export default mongoose.models.Product || mongoose.model('Order', OrderSchema);
+export default mongoose.models.Order || mongoose.model('Order', OrderSchema);
